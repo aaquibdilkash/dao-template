@@ -1,0 +1,44 @@
+{
+  "1": {
+    "governanceTokenContractAddress": "",
+    "timelockContractAddress": "",
+    "governerContractAddress": "",
+    "mainContractAddress": ""
+  },
+  "3": {
+    "governanceTokenContractAddress": "",
+    "timelockContractAddress": "",
+    "governerContractAddress": "",
+    "mainContractAddress": ""
+  },
+  "4": {
+    "governanceTokenContractAddress": "",
+    "timelockContractAddress": "",
+    "governerContractAddress": "",
+    "mainContractAddress": ""
+  },
+  "42": {
+    "governanceTokenContractAddress": "0x004B0E58B98789FD87b8806071Ec3993b1eF534a",
+    "timelockContractAddress": "0x36A18F1c6c504bB01446015AeBCCe5bf0C002766",
+    "governerContractAddress": "0x467cfcA0c73F380A403901d87B1f6Ca22aB50271",
+    "mainContractAddress": "0x46a07F62FeF80BCAa9F7E95201C7519d45aB1B41"
+  },
+  "56": {
+    "governanceTokenContractAddress": "",
+    "timelockContractAddress": "",
+    "governerContractAddress": "",
+    "mainContractAddress": ""
+  },
+  "97": {
+    "governanceTokenContractAddress": "",
+    "timelockContractAddress": "",
+    "governerContractAddress": "",
+    "mainContractAddress": ""
+  },
+  "31337": {
+    "governanceTokenContractAddress": "",
+    "timelockContractAddress": "",
+    "governerContractAddress": "",
+    "mainContractAddress": ""
+  }
+}

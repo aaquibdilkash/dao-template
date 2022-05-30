@@ -1,8 +1,7 @@
-// import { HardhatRuntimeEnvironment } from "hardhat/types"
-// import { DeployFunction } from "hardhat-deploy/types"
-const verify = require("../helper-functions")
-const { networkConfig, developmentChains } = require("../helper-hardhat-config")
+const {verify} = require("../helper-functions")
+const { networkConfig, developmentChains, addressFile } = require("../helper-hardhat-config")
 const { ethers } = require("hardhat")
+const fs = require("fs")
 
 const deployGovernanceToken = async function (hre) {
   // @ts-ignore
@@ -20,8 +19,13 @@ const deployGovernanceToken = async function (hre) {
   })
   log(`GovernanceToken at ${governanceToken.address}`)
   if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
-    await verify(governanceToken.address, [])
+    await verify(governanceToken.address, [], "contracts/GovernanceToken.sol:GovernanceToken")
   }
+
+  let address = JSON.parse(fs.readFileSync(addressFile, "utf8"))
+  const chainId = network.config.chainId?.toString()
+  address[chainId].governanceTokenContractAddress = governanceToken.address
+  fs.writeFileSync(addressFile, JSON.stringify(address))
   // log(`tranferring to ${deployer}`)
   // await transfer(governanceToken.address, deployer, "500000000000000000000000")
   // log("Transferred!")
@@ -43,27 +47,43 @@ const deployGovernanceToken = async function (hre) {
 // }
 
 const delegate = async (governanceTokenAddress, delegatedAccount, userAccount) => {
-  let governanceToken = await ethers.getContractAt("GovernanceToken", governanceTokenAddress)
+
+  let governanceToken = await ethers.getContractAt("GovernanceToken", governanceTokenAddress, delegatedAccount)
+  // let balanceOfContract = await governanceToken.balanceOf(governanceTokenAddress)
+  // console.log(`balance of contract: ${governanceTokenAddress} is ${balanceOfContract} before delegating to delegatedAccount`)
+
+  let balanceOfDelegatedAccount = await governanceToken.balanceOf(delegatedAccount)
+  console.log(`balance of delegatedAccount: ${delegatedAccount} is ${balanceOfDelegatedAccount} before delegation`)
+
   const transactionResponse = await governanceToken.delegate(delegatedAccount)
   await transactionResponse.wait(1)
 
-  console.log(`Checkpoints: ${await governanceToken.numCheckpoints(delegatedAccount)}`)
-  console.log(`Checkpoints: ${await governanceToken.numCheckpoints(delegatedAccount)}`)
+  // balanceOfContract = await governanceToken.balanceOf(governanceTokenAddress)
+  // console.log(`balance of contract: ${governanceTokenAddress} is ${balanceOfContract} after delegating to delegatedAccount`)
 
-  let balanceOfDelegatedAccount = await governanceToken.balanceOf(delegatedAccount)
-  console.log(`balance of ${delegatedAccount} is ${balanceOfDelegatedAccount}`)
+  // console.log(`Checkpoints: ${await governanceToken.numCheckpoints(delegatedAccount)}`)
+  // console.log(`Checkpoints: ${await governanceToken.numCheckpoints(delegatedAccount)}`)
 
+  balanceOfDelegatedAccount = await governanceToken.balanceOf(delegatedAccount)
+  console.log(`balance of delegatedAccount: ${delegatedAccount} is ${balanceOfDelegatedAccount} after delegation`)
+
+  let balanceOfUserAccount = await governanceToken.balanceOf(userAccount)
+  console.log(`balance of userAccount: ${userAccount} is ${balanceOfUserAccount}`)
+
+  console.log("start transferring")
   const tranferResponse = await governanceToken.transfer(userAccount, "600000000000000000000000")
   await tranferResponse.wait(1)
+  console.log("transferred")
+
   governanceToken = await ethers.getContractAt("GovernanceToken", governanceTokenAddress, userAccount)
   const delegateSelfResponse = await governanceToken.delegate(userAccount)
   await delegateSelfResponse.wait(1)
 
-  console.log(`Checkpoints: ${await governanceToken.numCheckpoints(delegatedAccount)}`)
-  console.log(`Checkpoints: ${await governanceToken.numCheckpoints(delegatedAccount)}`)
+  // console.log(`Checkpoints: ${await governanceToken.numCheckpoints(delegatedAccount)}`)
+  // console.log(`Checkpoints: ${await governanceToken.numCheckpoints(delegatedAccount)}`)
 
-  const balanceOfUserAccount = await governanceToken.balanceOf(userAccount)
-  console.log(`balance of ${userAccount} is ${balanceOfUserAccount}`)
+  balanceOfUserAccount = await governanceToken.balanceOf(userAccount)
+  console.log(`balance of userAccount: ${userAccount} is ${balanceOfUserAccount}`)
 
   balanceOfDelegatedAccount = await governanceToken.balanceOf(delegatedAccount)
   console.log(`balance of ${delegatedAccount} is ${balanceOfDelegatedAccount}`)
