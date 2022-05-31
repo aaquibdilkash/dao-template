@@ -7,10 +7,29 @@ require("solidity-coverage")
 require("hardhat-deploy")
 
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || ""
+
+const MAINNET_RPC_URL =
+  process.env.MAINNET_RPC_URL || "https://eth-rinkeby.alchemyapi.io/v2/your-api-key"
+
 const RINKEBY_RPC_URL =
   process.env.RINKEBY_RPC_URL || "https://eth-rinkeby.alchemyapi.io/v2/your-api-key"
+
+const KOVAN_RPC_URL =
+  process.env.KOVAN_RPC_URL || "https://eth-rinkeby.alchemyapi.io/v2/your-api-key"
+
+const ROPSTEN_RPC_URL =
+  process.env.ROPSTEN_RPC_URL || "https://eth-rinkeby.alchemyapi.io/v2/your-api-key"
+
+const BSC_TESTNET_RPC_URL =
+  process.env.BSC_TESTNET_RPC_URL || "https://eth-rinkeby.alchemyapi.io/v2/your-api-key"
+
+const BSC_RPC_URL =
+  process.env.BSC_RPC_URL || "https://eth-rinkeby.alchemyapi.io/v2/your-api-key"
+
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "privatKey"
+const PRIVATE_KEY_2 = process.env.PRIVATE_KEY_2 || "privatKey2"
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || ""
+const BSCSCAN_API_KEY = process.env.BSCSCAN_API_KEY || ""
 
 module.exports = {
   defaultNetwork: "hardhat",
@@ -21,10 +40,35 @@ module.exports = {
     localhost: {
       chainId: 31337,
     },
+    mainnet: {
+      url: MAINNET_RPC_URL,
+      accounts: [PRIVATE_KEY, PRIVATE_KEY_2],
+      chainId: 1,
+    },
+    ropsten: {
+      url: ROPSTEN_RPC_URL,
+      accounts: [PRIVATE_KEY, PRIVATE_KEY_2],
+      chainId: 3,
+    },
     rinkeby: {
       url: RINKEBY_RPC_URL,
-      accounts: [PRIVATE_KEY],
+      accounts: [PRIVATE_KEY, PRIVATE_KEY_2],
       chainId: 4,
+    },
+    kovan: {
+      url: KOVAN_RPC_URL,
+      accounts: [PRIVATE_KEY, PRIVATE_KEY_2],
+      chainId: 42,
+    },
+    bscTestnet: {
+      url: BSC_TESTNET_RPC_URL,
+      accounts: [PRIVATE_KEY, PRIVATE_KEY_2],
+      chainId: 97,
+    },
+    bsc: {
+      url: BSC_RPC_URL,
+      accounts: [PRIVATE_KEY, PRIVATE_KEY_2],
+      chainId: 56,
     },
   },
   solidity: {
@@ -37,7 +81,14 @@ module.exports = {
     },
   },
   etherscan: {
-    apiKey: ETHERSCAN_API_KEY,
+    apiKey: {
+      mainnet: ETHERSCAN_API_KEY,
+      ropsten: ETHERSCAN_API_KEY,
+      rinkeby: ETHERSCAN_API_KEY,
+      kovan: ETHERSCAN_API_KEY,
+      bscTestnet: BSCSCAN_API_KEY,
+      bsc: BSCSCAN_API_KEY
+    },
   },
   gasReporter: {
     enabled: true,

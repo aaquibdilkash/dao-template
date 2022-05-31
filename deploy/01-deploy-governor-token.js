@@ -1,4 +1,4 @@
-const {verify} = require("../helper-functions")
+const { verify } = require("../utils/verify")
 const { networkConfig, developmentChains, addressFile } = require("../helper-hardhat-config")
 const { ethers } = require("hardhat")
 const fs = require("fs")
@@ -10,6 +10,7 @@ const deployGovernanceToken = async function (hre) {
   const { deployer, user1 } = await getNamedAccounts()
   log("----------------------------------------------------")
   log("Deploying GovernanceToken and waiting for confirmations...")
+
   const governanceToken = await deploy("GovernanceToken", {
     from: deployer,
     args: [],
@@ -23,8 +24,17 @@ const deployGovernanceToken = async function (hre) {
   }
 
   let address = JSON.parse(fs.readFileSync(addressFile, "utf8"))
-  const chainId = network.config.chainId?.toString()
-  address[chainId].governanceTokenContractAddress = governanceToken.address
+  // const chainId = network.config.chainId?.toString()
+  const chainName = network.name
+  if (!(chainName in address)) {
+    address[chainName] = {
+      governanceTokenContractAddress: "",
+      timelockContractAddress: "",
+      governerContractAddress: "",
+      mainContractAddress: "",
+    }
+  }
+  address[chainName].governanceTokenContractAddress = governanceToken.address
   fs.writeFileSync(addressFile, JSON.stringify(address))
   // log(`tranferring to ${deployer}`)
   // await transfer(governanceToken.address, deployer, "500000000000000000000000")
@@ -47,13 +57,18 @@ const deployGovernanceToken = async function (hre) {
 // }
 
 const delegate = async (governanceTokenAddress, delegatedAccount, userAccount) => {
-
-  let governanceToken = await ethers.getContractAt("GovernanceToken", governanceTokenAddress, delegatedAccount)
+  let governanceToken = await ethers.getContractAt(
+    "GovernanceToken",
+    governanceTokenAddress,
+    delegatedAccount
+  )
   // let balanceOfContract = await governanceToken.balanceOf(governanceTokenAddress)
   // console.log(`balance of contract: ${governanceTokenAddress} is ${balanceOfContract} before delegating to delegatedAccount`)
 
   let balanceOfDelegatedAccount = await governanceToken.balanceOf(delegatedAccount)
-  console.log(`balance of delegatedAccount: ${delegatedAccount} is ${balanceOfDelegatedAccount} before delegation`)
+  console.log(
+    `balance of delegatedAccount: ${delegatedAccount} is ${balanceOfDelegatedAccount} before delegation`
+  )
 
   const transactionResponse = await governanceToken.delegate(delegatedAccount)
   await transactionResponse.wait(1)
@@ -65,7 +80,9 @@ const delegate = async (governanceTokenAddress, delegatedAccount, userAccount) =
   // console.log(`Checkpoints: ${await governanceToken.numCheckpoints(delegatedAccount)}`)
 
   balanceOfDelegatedAccount = await governanceToken.balanceOf(delegatedAccount)
-  console.log(`balance of delegatedAccount: ${delegatedAccount} is ${balanceOfDelegatedAccount} after delegation`)
+  console.log(
+    `balance of delegatedAccount: ${delegatedAccount} is ${balanceOfDelegatedAccount} after delegation`
+  )
 
   let balanceOfUserAccount = await governanceToken.balanceOf(userAccount)
   console.log(`balance of userAccount: ${userAccount} is ${balanceOfUserAccount}`)
@@ -75,7 +92,11 @@ const delegate = async (governanceTokenAddress, delegatedAccount, userAccount) =
   await tranferResponse.wait(1)
   console.log("transferred")
 
-  governanceToken = await ethers.getContractAt("GovernanceToken", governanceTokenAddress, userAccount)
+  governanceToken = await ethers.getContractAt(
+    "GovernanceToken",
+    governanceTokenAddress,
+    userAccount
+  )
   const delegateSelfResponse = await governanceToken.delegate(userAccount)
   await delegateSelfResponse.wait(1)
 

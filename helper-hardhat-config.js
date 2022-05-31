@@ -3,13 +3,26 @@ const networkConfig = {
   hardhat: {},
   // Price Feed Address, values can be obtained at https://docs.chain.link/docs/reference-contracts
   // Default one is ETH/USD contract on Kovan
+  ropsten: {
+    blockConfirmations: 6,
+  },
+  rinkeby: {
+    blockConfirmations: 6,
+  },
   kovan: {
+    blockConfirmations: 6,
+  },
+  bsc_testnet: {
+    blockConfirmations: 6,
+  },
+  bsc: {
     blockConfirmations: 6,
   },
 }
 
 const developmentChains = ["hardhat", "localhost"]
 const proposalsFile = "proposals.json"
+const addressFile = "address.json"
 
 // Governor Values
 const QUORUM_PERCENTAGE = 40 // Need 4% of voters to pass
@@ -27,6 +40,7 @@ module.exports = {
   networkConfig,
   developmentChains,
   proposalsFile,
+  addressFile,
   QUORUM_PERCENTAGE,
   MIN_DELAY,
   VOTING_PERIOD,
@@ -34,5 +48,5 @@ module.exports = {
   ADDRESS_ZERO,
   NEW_STORE_VALUE,
   FUNC,
-  PROPOSAL_DESCRIPTION
+  PROPOSAL_DESCRIPTION,
 }

@@ -1,33 +1,25 @@
 const { verify } = require("../utils/verify")
-const {
-  networkConfig,
-  developmentChains,
-  MIN_DELAY,
-  addressFile,
-} = require("../helper-hardhat-config")
+const { networkConfig, developmentChains, addressFile } = require("../helper-hardhat-config")
+const { ethers } = require("hardhat")
 const fs = require("fs")
 
-const deployTimeLock = async function (hre) {
+const deployBox = async function (hre) {
   // @ts-ignore
   const { getNamedAccounts, deployments, network } = hre
   const { deploy, log } = deployments
   const { deployer } = await getNamedAccounts()
   log("----------------------------------------------------")
-  log("Deploying TimeLock and waiting for confirmations...")
-  const timeLock = await deploy("TimeLock", {
+  log("Deploying Box and waiting for confirmations...")
+  const box = await deploy("Box", {
     from: deployer,
-    args: [MIN_DELAY, [], []],
+    args: [],
     log: true,
     // we need to wait if on a live network so we can verify properly
     waitConfirmations: networkConfig[network.name].blockConfirmations || 1,
   })
-  log(`TimeLock at ${timeLock.address}`)
+  log(`Box at ${box.address}`)
   if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
-    await verify(
-      timeLock.address,
-      [MIN_DELAY, [], []],
-      "contracts/governance_standard/TimeLock.sol:TimeLock"
-    )
+    await verify(box.address, [], "contracts/Box.sol:Box")
   }
 
   let address = JSON.parse(fs.readFileSync(addressFile, "utf8"))
@@ -41,9 +33,14 @@ const deployTimeLock = async function (hre) {
       mainContractAddress: "",
     }
   }
-  address[chainName].timelockContractAddress = timeLock.address
+  address[chainName].mainContractAddress = box.address
   fs.writeFileSync(addressFile, JSON.stringify(address))
+
+  const boxContract = await ethers.getContractAt("Box", box.address)
+  const timeLock = await ethers.getContract("TimeLock")
+  const transferTx = await boxContract.transferOwnership(timeLock.address)
+  await transferTx.wait(1)
 }
 
-module.exports = deployTimeLock
-deployTimeLock.tags = ["all", "timelock"]
+module.exports = deployBox
+deployBox.tags = ["all", "box"]

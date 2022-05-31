@@ -1,4 +1,4 @@
-const { verify } = require("../helper-functions")
+const { verify } = require("../utils/verify")
 const {
   networkConfig,
   developmentChains,
@@ -34,18 +34,25 @@ const deployGovernorContract = async function (hre) {
   })
   log(`GovernorContract at ${governorContract.address}`)
   if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
-    await verify(governorContract.address, [
-      governanceToken.address,
-      timeLock.address,
-      QUORUM_PERCENTAGE,
-      VOTING_PERIOD,
-      VOTING_DELAY,
-    ], "contracts/governance_standard/GovernorContract.sol:GovernorContract")
+    await verify(
+      governorContract.address,
+      [governanceToken.address, timeLock.address, QUORUM_PERCENTAGE, VOTING_PERIOD, VOTING_DELAY],
+      "contracts/governance_standard/GovernorContract.sol:GovernorContract"
+    )
   }
 
   let address = JSON.parse(fs.readFileSync(addressFile, "utf8"))
-  const chainId = network.config.chainId?.toString()
-  address[chainId].governerContractAddress = governorContract.address
+  // const chainId = network.config.chainId?.toString()
+  const chainName = network.name
+  if (!(chainName in address)) {
+    address[chainName] = {
+      governanceTokenContractAddress: "",
+      timelockContractAddress: "",
+      governerContractAddress: "",
+      mainContractAddress: "",
+    }
+  }
+  address[chainName].governerContractAddress = governorContract.address
   fs.writeFileSync(addressFile, JSON.stringify(address))
 }
 
