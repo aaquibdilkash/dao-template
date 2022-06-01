@@ -25,7 +25,8 @@
     "lint": "solhint 'contracts/*.sol'",
     "lint:fix": "solhint 'contracts/**/*.sol' --fix",
     "format": "yarn prettier --write .",
-    "typechain": "yarn hardhat typechain",
+    "coverage": "yarn hardhat coverage",
+    "test": "yarn hardhat test",
     "ci:clean": "rm -rf ./artifacts ./cache .;types"
   }
 }

@@ -12,7 +12,7 @@ const networkConfig = {
   kovan: {
     blockConfirmations: 6,
   },
-  bsc_testnet: {
+  bscTestnet: {
     blockConfirmations: 6,
   },
   bsc: {

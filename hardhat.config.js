@@ -6,8 +6,6 @@ require("dotenv/config")
 require("solidity-coverage")
 require("hardhat-deploy")
 
-const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || ""
-
 const MAINNET_RPC_URL =
   process.env.MAINNET_RPC_URL || "https://eth-rinkeby.alchemyapi.io/v2/your-api-key"
 
@@ -23,13 +21,13 @@ const ROPSTEN_RPC_URL =
 const BSC_TESTNET_RPC_URL =
   process.env.BSC_TESTNET_RPC_URL || "https://eth-rinkeby.alchemyapi.io/v2/your-api-key"
 
-const BSC_RPC_URL =
-  process.env.BSC_RPC_URL || "https://eth-rinkeby.alchemyapi.io/v2/your-api-key"
+const BSC_RPC_URL = process.env.BSC_RPC_URL || "https://eth-rinkeby.alchemyapi.io/v2/your-api-key"
 
-const PRIVATE_KEY = process.env.PRIVATE_KEY || "privatKey"
-const PRIVATE_KEY_2 = process.env.PRIVATE_KEY_2 || "privatKey2"
-const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || ""
-const BSCSCAN_API_KEY = process.env.BSCSCAN_API_KEY || ""
+const PRIVATE_KEY = process.env.PRIVATE_KEY || "<privatKey>"
+const PRIVATE_KEY_2 = process.env.PRIVATE_KEY_2 || "<privatKey2>"
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "<your etherscan api>"
+const BSCSCAN_API_KEY = process.env.BSCSCAN_API_KEY || "<your bscscan api>"
+const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || "<your coinmarketcap api>"
 
 module.exports = {
   defaultNetwork: "hardhat",
@@ -87,7 +85,7 @@ module.exports = {
       rinkeby: ETHERSCAN_API_KEY,
       kovan: ETHERSCAN_API_KEY,
       bscTestnet: BSCSCAN_API_KEY,
-      bsc: BSCSCAN_API_KEY
+      bsc: BSCSCAN_API_KEY,
     },
   },
   gasReporter: {
@@ -95,7 +93,7 @@ module.exports = {
     currency: "USD",
     outputFile: "gas-report.txt",
     noColors: true,
-    // coinmarketcap: COINMARKETCAP_API_KEY,
+    coinmarketcap: COINMARKETCAP_API_KEY,
   },
   namedAccounts: {
     deployer: {
@@ -105,7 +103,7 @@ module.exports = {
     user1: {
       default: 1,
       1: 1,
-    }
+    },
   },
   mocha: {
     timeout: 200000, // 200 seconds max for running tests
