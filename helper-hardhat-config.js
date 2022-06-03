@@ -25,7 +25,7 @@ const proposalsFile = "proposals.json"
 const addressFile = "address.json"
 
 // Governor Values
-const QUORUM_PERCENTAGE = 40 // Need 4% of voters to pass
+const QUORUM_PERCENTAGE = 40 // Need 40% of voters to pass
 const MIN_DELAY = 3600 // 1 hour - after a vote passes, you have 1 hour before you can enact
 // export const VOTING_PERIOD = 45818 // 1 week - how long the vote lasts. This is pretty long even for local tests
 const VOTING_PERIOD = 5 // blocks

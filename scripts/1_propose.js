@@ -11,7 +11,6 @@ const fs = require("fs")
 const { moveBlocks } = require("../utils/move-blocks")
 
 const propose = async (args, functionToCall, proposalDescription) => {
-  // await deployments.fixture(["all"])
   const governor = await ethers.getContract("GovernorContract")
   const box = await ethers.getContract("Box")
   const encodedFunctionCall = box.interface.encodeFunctionData(functionToCall, args)
