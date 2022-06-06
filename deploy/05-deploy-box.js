@@ -1,45 +1,32 @@
 const { verify } = require("../utils/verify")
-const { networkConfig, developmentChains, addressFile } = require("../helper-hardhat-config")
+const { networkConfig, developmentChains } = require("../helper-hardhat-config")
 const { ethers } = require("hardhat")
-const fs = require("fs")
+const { saveAddresses } = require("../utils/saveAddresses")
 
 const deployBox = async function (hre) {
-  // @ts-ignore
-  const { getNamedAccounts, deployments, network } = hre
-  const { deploy, log } = deployments
-  const { deployer } = await getNamedAccounts()
-  log("----------------------------------------------------")
-  log("Deploying Box and waiting for confirmations...")
-  const box = await deploy("Box", {
-    from: deployer,
-    args: [],
-    log: true,
-    // we need to wait if on a live network so we can verify properly
-    waitConfirmations: networkConfig[network.name].blockConfirmations || 1,
-  })
-  log(`Box at ${box.address}`)
-  if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
-    await verify(box.address, [], "contracts/Box.sol:Box")
-  }
-
-  let address = JSON.parse(fs.readFileSync(addressFile, "utf8"))
-  // const chainId = network.config.chainId?.toString()
-  const chainName = network.name
-  if (!(chainName in address)) {
-    address[chainName] = {
-      governanceTokenContractAddress: "",
-      timelockContractAddress: "",
-      governerContractAddress: "",
-      mainContractAddress: "",
+    const { getNamedAccounts, deployments, network } = hre
+    const { deploy, log } = deployments
+    const { deployer } = await getNamedAccounts()
+    log("----------------------------------------------------")
+    log("Deploying Box and waiting for confirmations...")
+    const box = await deploy("Box", {
+        from: deployer,
+        args: [],
+        log: true,
+        // we need to wait if on a live network so we can verify properly
+        waitConfirmations: networkConfig[network.name].blockConfirmations || 1,
+    })
+    log(`Box at ${box.address}`)
+    if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
+        await verify(box.address, [], "contracts/Box.sol:Box")
     }
-  }
-  address[chainName].mainContractAddress = box.address
-  fs.writeFileSync(addressFile, JSON.stringify(address))
 
-  const boxContract = await ethers.getContractAt("Box", box.address)
-  const timeLock = await ethers.getContract("TimeLock")
-  const transferTx = await boxContract.transferOwnership(timeLock.address)
-  await transferTx.wait(1)
+    saveAddresses("mainContractAddress", box.address)
+
+    const boxContract = await ethers.getContractAt("Box", box.address)
+    const timeLock = await ethers.getContract("TimeLock")
+    const transferTx = await boxContract.transferOwnership(timeLock.address)
+    await transferTx.wait(1)
 }
 
 module.exports = deployBox
