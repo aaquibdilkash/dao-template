@@ -20,7 +20,7 @@ describe("Governor Flow", async () => {
     let user1
     const voteWay = 1 // for
     const voteAgainst = 0 // against
-    const reason = "I lika do da cha cha"
+    const reason = "decentralization rocks"
     beforeEach(async () => {
         ;({ deployer, user1 } = await getNamedAccounts())
         await deployments.fixture(["all"])
@@ -83,7 +83,7 @@ describe("Governor Flow", async () => {
         console.log(`Current Proposal State: ${proposalState}`)
 
         console.log("Executing...")
-        // console.log
+
         const exTx = await governor.execute(
             [box.address],
             [0],
