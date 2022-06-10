@@ -27,8 +27,8 @@ const setupContracts = async function (hreconst) {
     await executorTx.wait(1)
 
     // set canceller role
-    const cancellerTx = await timeLock.grantRole(cancellerRole, deployer)
-    await cancellerTx.wait(1)
+    // const cancellerTx = await timeLock.grantRole(cancellerRole, deployer)
+    // await cancellerTx.wait(1)
 
     // revoke deployer's admin role
     const revokeTx = await timeLock.revokeRole(adminRole, deployer)
