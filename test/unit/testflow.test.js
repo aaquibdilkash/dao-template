@@ -10,6 +10,12 @@ const {
     NEW_VOTING_PERIOD,
     CHANGE_VOTING_PERIOD_PROPOSAL_DESCRIPTION,
     MIN_DELAY,
+    SET_VOTING_DELAY,
+    NEW_VOTING_DELAY,
+    CHANGE_VOTING_DELAY_PROPOSAL_DESCRIPTION,
+    NEW_MIN_DELAY,
+    SET_MIN_DELAY,
+    CHANGE_MIN_DELAY_PROPOSAL_DESCRIPTION,
 } = require("../../helper-hardhat-config")
 const { moveBlocks } = require("../../utils/move-blocks")
 const { moveTime } = require("../../utils/move-time")
@@ -37,11 +43,11 @@ describe("Governor Flow-------------------------------------------------", async
     })
 
     describe("Propose, Vote, Queue and Execute Tests-------------------------------------------------", () => {
-        it("can only be changed through governance", async () => {
+        it("can only be changed through governance--------------------------------------------------------------------------", async () => {
             await expect(box.store(55)).to.be.revertedWith("Ownable: caller is not the owner")
         })
 
-        it("proposes, votes, waits, queues, and then executes", async () => {
+        it("proposes, votes, waits, queues, and then executes----------------------------------------------------------------", async () => {
             // propose
 
             // in front end using ethers
@@ -100,7 +106,7 @@ describe("Governor Flow-------------------------------------------------", async
             console.log((await box.retrieve()).toString())
         })
 
-        it("changes voting period", async () => {
+        it("changes voting period------------------------------------------------------------------------", async () => {
             const encodedFunctionCall = governor.interface.encodeFunctionData(SET_VOTING_PERIOD, [
                 NEW_VOTING_PERIOD,
             ])
@@ -156,6 +162,118 @@ describe("Governor Flow-------------------------------------------------", async
             await exTx.wait(1)
             expect((await governor.votingPeriod()).toString()).to.equal("7")
         })
+        it("changes voting delay-------------------------------------------------------------------------", async () => {
+            const encodedFunctionCall = governor.interface.encodeFunctionData(SET_VOTING_DELAY, [
+                NEW_VOTING_DELAY,
+            ])
+            const proposeTx = await governor.propose(
+                [governor.address],
+                [0],
+                [encodedFunctionCall],
+                CHANGE_VOTING_DELAY_PROPOSAL_DESCRIPTION
+            )
+
+            const proposeReceipt = await proposeTx.wait(1)
+
+            const proposalId = proposeReceipt.events[0]?.args?.proposalId
+
+            let proposalState = await governor.state(proposalId)
+
+            console.log(`Current Proposal State: ${proposalState}`)
+
+            await moveBlocks(VOTING_DELAY + 1)
+
+            // vote
+            const voteTx = await governor.castVoteWithReason(proposalId, voteWay, reason)
+            await voteTx.wait(1)
+            proposalState = await governor.state(proposalId)
+            assert.equal(proposalState.toString(), "1")
+            console.log(`Current Proposal State: ${proposalState}`)
+            await moveBlocks(VOTING_PERIOD + 1)
+
+            // queue & execute
+            // const descriptionHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(PROPOSAL_DESCRIPTION))
+            const descriptionHash = ethers.utils.id(CHANGE_VOTING_DELAY_PROPOSAL_DESCRIPTION)
+            const queueTx = await governor.queue(
+                [governor.address],
+                [0],
+                [encodedFunctionCall],
+                descriptionHash
+            )
+            await queueTx.wait(1)
+            await moveTime(MIN_DELAY + 1)
+            await moveBlocks(1)
+
+            proposalState = await governor.state(proposalId)
+            console.log(`Current Proposal State: ${proposalState}`)
+
+            console.log("Executing...")
+            // console.log
+            const exTx = await governor.execute(
+                [governor.address],
+                [0],
+                [encodedFunctionCall],
+                descriptionHash
+            )
+            await exTx.wait(1)
+            expect((await governor.votingDelay()).toString()).to.equal("2")
+        })
+        it("changes minimum delay--------------------------------------------------------------------------", async () => {
+            const encodedFunctionCall = timeLock.interface.encodeFunctionData(SET_MIN_DELAY, [
+                NEW_MIN_DELAY,
+            ])
+            const proposeTx = await governor.propose(
+                [timeLock.address],
+                [0],
+                [encodedFunctionCall],
+                CHANGE_MIN_DELAY_PROPOSAL_DESCRIPTION
+            )
+
+            const proposeReceipt = await proposeTx.wait(1)
+
+            const proposalId = proposeReceipt.events[0]?.args?.proposalId
+
+            let proposalState = await governor.state(proposalId)
+
+            console.log(`Current Proposal State: ${proposalState}`)
+
+            await moveBlocks(VOTING_DELAY + 1)
+
+            // vote
+            const voteTx = await governor.castVoteWithReason(proposalId, voteWay, reason)
+            await voteTx.wait(1)
+            proposalState = await governor.state(proposalId)
+            assert.equal(proposalState.toString(), "1")
+            console.log(`Current Proposal State: ${proposalState}`)
+            await moveBlocks(VOTING_PERIOD + 1)
+
+            // queue & execute
+            // const descriptionHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(PROPOSAL_DESCRIPTION))
+            const descriptionHash = ethers.utils.id(CHANGE_MIN_DELAY_PROPOSAL_DESCRIPTION)
+            const queueTx = await governor.queue(
+                [timeLock.address],
+                [0],
+                [encodedFunctionCall],
+                descriptionHash
+            )
+            await queueTx.wait(1)
+            await moveTime(MIN_DELAY + 1)
+            await moveBlocks(1)
+
+            proposalState = await governor.state(proposalId)
+            console.log(`Current Proposal State: ${proposalState}`)
+
+            console.log("Executing...")
+            // console.log
+            const exTx = await governor.execute(
+                [timeLock.address],
+                [0],
+                [encodedFunctionCall],
+                descriptionHash
+            )
+            await exTx.wait(1)
+            expect((await timeLock.getMinDelay()).toString()).to.equal("7200")
+        })
     })
 
     describe("Cancellation of proposals-----------------------------------------------------", () => {
@@ -187,7 +305,7 @@ describe("Governor Flow-------------------------------------------------", async
 
             descriptionHash = ethers.utils.id(CHANGE_VOTING_PERIOD_PROPOSAL_DESCRIPTION)
         })
-        it("proposer should be able to cancels a proposal", async () => {
+        it("proposer should be able to cancels a proposal------------------------------------------------------------------------", async () => {
             const cancelTx = await governor
                 .connect(user1)
                 .cancel([governor.address], [0], [encodedFunctionCall], descriptionHash)
@@ -206,7 +324,7 @@ describe("Governor Flow-------------------------------------------------", async
             ).to.be.revertedWith("Governor: vote not currently active")
         })
 
-        it("only proposer should be able to cancels a proposal", async () => {
+        it("only proposer should be able to cancels a proposal------------------------------------------------------------------------", async () => {
             await expect(
                 governor
                     .connect(deployer)
