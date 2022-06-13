@@ -23,6 +23,7 @@ const BSC_TESTNET_RPC_URL =
 
 const BSC_RPC_URL = process.env.BSC_RPC_URL || "https://eth-rinkeby.alchemyapi.io/v2/your-api-key"
 
+const MNEMONIC = process.env.MNEMONIC || "<mnemonic>"
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "<privatKey>"
 const PRIVATE_KEY_2 = process.env.PRIVATE_KEY_2 || "<privatKey2>"
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "<your etherscan api>"
@@ -45,31 +46,37 @@ module.exports = {
         mainnet: {
             url: MAINNET_RPC_URL,
             accounts: [PRIVATE_KEY, PRIVATE_KEY_2],
+            // accounts: {MNEMONIC},
             chainId: 1,
         },
         ropsten: {
             url: ROPSTEN_RPC_URL,
             accounts: [PRIVATE_KEY, PRIVATE_KEY_2],
+            // accounts: {MNEMONIC},
             chainId: 3,
         },
         rinkeby: {
             url: RINKEBY_RPC_URL,
             accounts: [PRIVATE_KEY, PRIVATE_KEY_2],
+            // accounts: {MNEMONIC},
             chainId: 4,
         },
         kovan: {
             url: KOVAN_RPC_URL,
             accounts: [PRIVATE_KEY, PRIVATE_KEY_2],
+            // accounts: {MNEMONIC},
             chainId: 42,
         },
         bscTestnet: {
             url: BSC_TESTNET_RPC_URL,
             accounts: [PRIVATE_KEY, PRIVATE_KEY_2],
+            // accounts: {MNEMONIC},
             chainId: 97,
         },
         bsc: {
             url: BSC_RPC_URL,
             accounts: [PRIVATE_KEY, PRIVATE_KEY_2],
+            // accounts: {MNEMONIC},
             chainId: 56,
         },
     },
