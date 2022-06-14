@@ -13,6 +13,7 @@ const saveAddresses = async (addressType, contractAddress) => {
                 timelockContractAddress: "",
                 governerContractAddress: "",
                 mainContractAddress: "",
+                airdropContractAddress: "",
             }
         }
         address[chainName][`${addressType}`] = contractAddress

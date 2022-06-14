@@ -19,6 +19,7 @@ const {
 } = require("../../helper-hardhat-config")
 const { moveBlocks } = require("../../utils/move-blocks")
 const { moveTime } = require("../../utils/move-time")
+const { formatEther } = require("ethers/lib/utils")
 
 describe("Governor Flow-------------------------------------------------", async () => {
     let governor
@@ -27,6 +28,7 @@ describe("Governor Flow-------------------------------------------------", async
     let box
     let deployer
     let user1
+    let user1Balace
     // const [deployer, user1, _] = await ethers.getSigners()
     const voteWay = 1 // for
     const voteAgainst = 0 // against
@@ -38,7 +40,11 @@ describe("Governor Flow-------------------------------------------------", async
         governor = await ethers.getContract("GovernorContract", deployer.address)
         timeLock = await ethers.getContract("TimeLock")
         governanceToken = await ethers.getContract("GovernanceToken")
-        console.log(await (await governanceToken.balanceOf(user1.address)).toString(), "balance")
+        user1Balace = (await governanceToken.balanceOf(user1.address)).toString()
+        console.log(
+            "balance of user1",
+            formatEther((await governanceToken.balanceOf(user1.address)).toString())
+        )
         box = await ethers.getContract("Box")
     })
 

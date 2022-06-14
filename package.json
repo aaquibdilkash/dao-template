@@ -28,5 +28,8 @@
     "coverage": "yarn hardhat coverage",
     "test": "yarn hardhat test",
     "ci:clean": "rm -rf ./artifacts ./cache .;types"
+  },
+  "dependencies": {
+    "merkletreejs": "^0.2.31"
   }
 }
