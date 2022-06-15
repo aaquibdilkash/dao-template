@@ -83,4 +83,8 @@ contract AirDrop is Ownable, ReentrancyGuard {
     function isInitiated() external view returns (bool) {
         return s_initiated;
     }
+
+    function claimed(address _claimAddress) external view returns (bool) {
+        return s_claimed[_claimAddress];
+    }
 }
