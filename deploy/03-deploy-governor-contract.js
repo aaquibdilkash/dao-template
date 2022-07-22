@@ -13,7 +13,8 @@ const deployGovernorContract = async function (hre) {
     const { getNamedAccounts, deployments, network } = hre
     const { deploy, log, get } = deployments
     const { deployer } = await getNamedAccounts()
-    const governanceToken = await get("GovernanceToken")
+    // const governanceToken = await get("GovernanceToken")
+    const governanceToken = await get("MyTokenWrapper")
     const timeLock = await get("TimeLock")
 
     log("----------------------------------------------------")

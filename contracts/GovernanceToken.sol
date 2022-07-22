@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
 contract GovernanceToken is ERC20Votes {
-    uint256 public sMaxSupply = 1000000 * 10**decimals();
+    uint256 public sMaxSupply = 1 * 10**6 * 10**decimals();
 
     constructor() ERC20("GovernanceToken", "GT") ERC20Permit("GovernanceToken") {
         _mint(msg.sender, sMaxSupply);

@@ -10,6 +10,8 @@ const saveAddresses = async (addressType, contractAddress) => {
         if (!(chainName in address)) {
             address[chainName] = {
                 governanceTokenContractAddress: "",
+                myTokenContractAddress: "",
+                myTokenWrapperContractAddress: "",
                 timelockContractAddress: "",
                 governerContractAddress: "",
                 mainContractAddress: "",

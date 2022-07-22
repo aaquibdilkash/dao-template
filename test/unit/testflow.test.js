@@ -39,7 +39,8 @@ describe("Governor Flow-------------------------------------------------", async
         await deployments.fixture(["all"])
         governor = await ethers.getContract("GovernorContract", deployer.address)
         timeLock = await ethers.getContract("TimeLock")
-        governanceToken = await ethers.getContract("GovernanceToken")
+        governanceToken = await ethers.getContract("MyTokenWrapper")
+        // governanceToken = await ethers.getContract("GovernanceToken")
         user1Balace = (await governanceToken.balanceOf(user1.address)).toString()
         console.log(
             "balance of user1",

@@ -18,7 +18,7 @@ contract GovernorContract is
     GovernorVotesQuorumFraction,
     GovernorTimelockControl
 {
-    mapping(uint256 => address) s_propsalIdToProposer;
+    mapping(uint256 => address) private s_propsalIdToProposer;
 
     constructor(
         IVotes _token,

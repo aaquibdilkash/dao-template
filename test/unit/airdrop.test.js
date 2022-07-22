@@ -8,7 +8,6 @@ describe("Airdrop-------------------------------------------------", async () =>
     let airdrop
     let deployer
     let user1
-    let TOKENS_IN_POOL
     let REWARD_AMOUNT
     let addrs
     let contractBlocknumber
@@ -29,7 +28,7 @@ describe("Airdrop-------------------------------------------------", async () =>
         airdropAmount = "100000"
     })
 
-    describe("Claim AirDrop Reward-----------------------------------------------------", () => {
+    describe("Claim AirDrop Reward------------------------------------------------------", () => {
         beforeEach(async () => {
             await Promise.all(
                 addrs.slice(0, totalParticipated).map(async (account) => {
@@ -78,7 +77,7 @@ describe("Airdrop-------------------------------------------------", async () =>
             //     .connect(deployer)
             //     .initiateAirdrop(rootHash, governanceToken.address, REWARD_AMOUNT)
         })
-        it("checks the claim balances-------------------------------------", async () => {
+        it("checks the claim balances------------------------------------------------", async () => {
             airdrop
                 .connect(deployer)
                 .initiateAirdrop(rootHash, governanceToken.address, REWARD_AMOUNT)
@@ -99,14 +98,14 @@ describe("Airdrop-------------------------------------------------", async () =>
             expect(formatEther(await governanceToken.balanceOf(airdrop.address))).to.equal("0.0")
         })
 
-        it("claim should be reverted if airdrop is not initiated", async () => {
+        it("claim should be reverted if airdrop is not initiated--------------------------------------", async () => {
             const proof = merkleTree.getHexProof(keccak256(addrs[10].address))
             await expect(airdrop.connect(addrs[0]).claim(proof)).to.be.revertedWith(
                 "AirDrop__NotInitiated()"
             )
         })
 
-        it("only owner should be able to initiate airdrop", async () => {
+        it("only owner should be able to initiate airdrop---------------------------------------------", async () => {
             await expect(
                 airdrop
                     .connect(user1)
@@ -114,7 +113,7 @@ describe("Airdrop-------------------------------------------------", async () =>
             ).to.be.revertedWith("Ownable: caller is not the owner")
         })
 
-        it("should not be able to initiate twice", async () => {
+        it("should not be able to initiate twice----------------------------------------------", async () => {
             airdrop
                 .connect(deployer)
                 .initiateAirdrop(rootHash, governanceToken.address, REWARD_AMOUNT)
@@ -124,7 +123,7 @@ describe("Airdrop-------------------------------------------------", async () =>
                     .initiateAirdrop(rootHash, governanceToken.address, REWARD_AMOUNT)
             ).to.be.revertedWith("AirDrop__AlreadyInitiated()")
         })
-        it("should not be able to participate after initiation", async () => {
+        it("should not be able to participate after initiation------------------------------------", async () => {
             await airdrop
                 .connect(deployer)
                 .initiateAirdrop(rootHash, governanceToken.address, REWARD_AMOUNT)
@@ -133,13 +132,13 @@ describe("Airdrop-------------------------------------------------", async () =>
                 "AirDrop__ParticipationEnded()"
             )
         })
-        it("should only be able to participate once", async () => {
+        it("should only be able to participate once-----------------------------------------------", async () => {
             await expect(airdrop.connect(deployer).participate()).to.be.revertedWith(
                 "AirDrop__AlreadyParticipated()"
             )
         })
 
-        it("addresss who didn't participated should not be able to claim", async () => {
+        it("addresss who didn't participated should not be able to claim--------------------------------------------", async () => {
             airdrop
                 .connect(deployer)
                 .initiateAirdrop(rootHash, governanceToken.address, REWARD_AMOUNT)
@@ -168,7 +167,7 @@ describe("Airdrop-------------------------------------------------", async () =>
             )
         })
 
-        it("claim function should be reverted if already claimed", async () => {
+        it("claim function should be reverted if already claimed-------------------------------------------------", async () => {
             await airdrop
                 .connect(deployer)
                 .initiateAirdrop(rootHash, governanceToken.address, REWARD_AMOUNT)
